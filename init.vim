@@ -50,7 +50,7 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript'] }
       Plug 'tpope/vim-repeat'
       Plug 'tpope/vim-surround'
       Plug 'https://github.com/Alok/notational-fzf-vim', { 'on': 'NV' }
-      Plug 'junegunn/gv.vim', { 'on': 'BCommits' }
+      Plug 'junegunn/gv.vim'
       Plug 'jremmen/vim-ripgrep'
     " }}}
 
@@ -68,34 +68,40 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript'] }
         filetype indent on
         filetype plugin indent on
 
-        set t_Co=256
-        set t_8b=[48;2;%lu;%lu;%lum
-        set t_8f=[38;2;%lu;%lu;%lum
-        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+        highlight Comment cterm=italic
+
+        let $NVIM_TUI_ENABLE_TRUE_COLOR=1
         let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+        let &t_ZH="\e[3m"
+        let &t_ZR="\e[23m"
+        let g:nv_search_paths = ['~/notes']
+        let g:python_host_prog='/usr/bin/python'
+
+        set t_Co=256
+        " set t_8b=[48;2;%lu;%lu;%lum
+        " set t_8f=[38;2;%lu;%lu;%lum
         set termguicolors
         set encoding=utf8
-
-        let g:python_host_prog='/usr/bin/python'
-        let $NVIM_TUI_ENABLE_TRUE_COLOR=1
         set autoread                                      " if file changes outside of vim, redraw buffer
         set colorcolumn=101
         set completeopt+=preview
-        set nolazyredraw                                  " fix for redraw bug. use with 'Native fullscreen windows' disabled on iterm
-        set mouse=a
         set diffopt+=vertical
         set expandtab
         set foldlevel=1
         set foldmethod=syntax
         set formatoptions+=j                              " delete comment character when joining commented lines
         set gdefault
+        set hidden                                        " enable multiple unsaved buffers to be maintained
         set ignorecase
         set laststatus=2                                  " always show the statusline
         set lazyredraw
         set list
         set listchars=tab:>-,trail:~,extends:>,precedes:< " ,space:. " mark all kinds of whitespace
+        set mouse=a
+        set nolazyredraw                                  " fix for redraw bug. use with 'Native fullscreen windows' disabled on iterm
+        set noshowmode
         set noswapfile
-        set hidden                                        " enable multiple unsaved buffers to be maintained
         set number
         set relativenumber
         set ruler
@@ -106,16 +112,11 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript'] }
         set smartcase
         set smartindent
         set softtabstop=2
-        set timeoutlen=400                                " careful! don't render NERDTreeToggle unreachable!
-        let &t_ZH="\e[3m"
-        let &t_ZR="\e[23m"
-        highlight Comment cterm=italic
         set tabstop=2
+        set timeoutlen=400                                " careful! don't render NERDTreeToggle unreachable!
         set undofile
         set wrap
-
         set rtp+=/usr/local/opt/fzf
-        let g:nv_search_paths = ['~/notes']
 
         syntax enable
 " }}}
@@ -311,29 +312,28 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript'] }
   endfunction
 
   nmap tt :call SwapTestFile()<CR>
-  " }}}
 
-inoremap <S-Tab> <C-x><C-o>
-inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
-let g:used_javascript_libs = 'angularjs'
+  inoremap <S-Tab> <C-x><C-o>
+  inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+  let g:used_javascript_libs = 'angularjs'
+
+  " prevent opening 1 when I mean :e!
+  autocmd BufNew 1 throw 'nope!'
+
+  let g:lightline = {
+        \ 'colorscheme': 'seoul256',
+        \ 'active': {
+        \   'left': [ [ 'mode', 'paste' ],
+        \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+        \ },
+        \ 'component_function': {
+        \   'gitbranch': 'fugitive#head'
+        \ },
+        \ }
+
+  " au BufRead *.json set filetype=json5
+  " }}}
 
 " 233 darkerst, 239 lightest
 let g:seoul256_background = 234
 colo gruvbox
-
-" prevent opening 1 when I mean :e!
-autocmd BufNew 1 throw 'nope!'
-
-se noshowmode
-let g:lightline = {
-      \ 'colorscheme': 'seoul256',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'fugitive#head'
-      \ },
-      \ }
-
-au BufRead *.json set filetype=json5

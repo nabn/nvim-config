@@ -1,6 +1,6 @@
 " vim:foldmethod=marker:foldlevel=0
 
-let enabled_filetypes = { 'for': ['javascript', 'typescript'] }
+let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
 
 " Plugins {{{
     call plug#begin('~/nvim/plugged')
@@ -52,6 +52,7 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript'] }
       Plug 'https://github.com/Alok/notational-fzf-vim', { 'on': 'NV' }
       Plug 'junegunn/gv.vim'
       Plug 'jremmen/vim-ripgrep'
+      Plug 'svermeulen/vim-easyclip'
     " }}}
 
     " Extras {{{
@@ -259,6 +260,7 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript'] }
         \ 'typescript': ['prettier', 'tslint'],
         \ 'json': ['prettier'],
         \ 'less': ['prettier'],
+        \ 'html': ['prettier']
         \ }
 
   " use local config

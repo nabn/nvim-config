@@ -9,7 +9,7 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
       " Plug 'Lokaltog/vim-monotone'
       Plug 'junegunn/seoul256.vim'
       Plug 'morhetz/gruvbox'
-      " Plug 'yuttie/inkstained-vim'
+      Plug 'yuttie/inkstained-vim'
 
       Plug 'ap/vim-css-color'
       Plug 'itchyny/lightline.vim'
@@ -51,8 +51,8 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
       Plug 'tpope/vim-surround'
       Plug 'https://github.com/Alok/notational-fzf-vim', { 'on': 'NV' }
       Plug 'junegunn/gv.vim'
+      Plug 'junegunn/vim-peekaboo'
       Plug 'jremmen/vim-ripgrep'
-      Plug 'svermeulen/vim-easyclip'
     " }}}
 
     " Extras {{{
@@ -231,16 +231,6 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
   autocmd FileType fzf nmap <C-c> :bw<CR>
   autocmd  FileType fzf set laststatus=0 noshowmode noruler
     \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
-
-  function! s:fzf_statusline()
-    " Override statusline as you like
-    highlight fzf1 ctermfg=161 ctermbg=251
-    highlight fzf2 ctermfg=23 ctermbg=251
-    highlight fzf3 ctermfg=237 ctermbg=251
-    setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
-  endfunction
-
-  autocmd! User FzfStatusLine call <SID>fzf_statusline()
 " }}}
 
   " Linters + Formatters {{{
@@ -300,42 +290,33 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
         \'x'    : '#(tmux-spotify-info)'}
 
   let g:tmuxline_powerline_separators = 0
-  autocmd filetype make setlocal noexpandtab
 
-  " swap between test and source files
-  function! SwapTestFile()
-    let fileName = expand('%d')
-
-    if fileName =~ "spec"
-      execute "edit " . substitute(fileName, ".spec", "", "")
-    else
-      execute "edit " . substitute(fileName, ".ts", ".spec.ts", "")
-    endif
-  endfunction
-
-  nmap tt :call SwapTestFile()<CR>
+  nmap tt :call helpers#SwapTestFile()<CR>
 
   inoremap <S-Tab> <C-x><C-o>
   inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
   let g:used_javascript_libs = 'angularjs'
 
   " prevent opening 1 when I mean :e!
-  autocmd BufNew 1 throw 'nope!'
+  autocmd BufNew 1 throw 'You ment to :e! but did :e1'
 
+  " \ 'colorscheme': 'inkstained',
   let g:lightline = {
-        \ 'colorscheme': 'seoul256',
-        \ 'active': {
-        \   'left': [ [ 'mode', 'paste' ],
-        \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-        \ },
-        \ 'component_function': {
-        \   'gitbranch': 'fugitive#head'
-        \ },
-        \ }
+      \ 'colorscheme': 'seoul256',
+      \ 'active': {
+      \   'left': [[ 'mode', 'paste' ],
+      \            [ 'gitbranch', 'readonly', 'filename', 'modified' ]]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head'
+      \ },
+      \ 'separator':    { 'left': '', 'right': '' },
+      \ 'subseparator': { 'left': '', 'right': '' },
+      \ }
 
-  " au BufRead *.json set filetype=json5
-  " }}}
+nnoremap gp :silent %!prettier --stdin --stdin-filepath % --trailing-comma all --single-quote<CR>
 
 " 233 darkerst, 239 lightest
 let g:seoul256_background = 234
 colo gruvbox
+se bg=dark

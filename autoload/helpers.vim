@@ -18,3 +18,15 @@ function helpers#DeleteHiddenBuffers()
     silent execute 'bwipeout' buf
   endfor
 endfunction
+
+" swap between test and source files
+function! helpers#SwapTestFile()
+  let fileName = expand('%d')
+
+  if fileName =~ "spec"
+    execute "edit " . substitute(fileName, ".spec", "", "")
+  else
+    execute "edit " . substitute(fileName, ".ts", ".spec.ts", "")
+  endif
+endfunction
+

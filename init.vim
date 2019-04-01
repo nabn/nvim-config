@@ -1,129 +1,101 @@
 " vim:foldmethod=marker:foldlevel=0
-
-let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
-
 " Plugins {{{
-    call plug#begin('~/nvim/plugged')
+  let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
 
-    " UI {{{{
-      " Plug 'Lokaltog/vim-monotone'
-      Plug 'junegunn/seoul256.vim'
-      Plug 'morhetz/gruvbox'
-      Plug 'yuttie/inkstained-vim'
+  call plug#begin('~/nvim/plugged')
 
-      Plug 'ap/vim-css-color'
-      Plug 'itchyny/lightline.vim'
-      Plug 'junegunn/goyo.vim',  { 'on': 'Goyo' }
-      Plug 'junegunn/limelight.vim', { 'on': 'Limelight' }
-      Plug 'mhinz/vim-startify'
-    " }}}}
+  " UI {{{{
+    Plug 'morhetz/gruvbox'
+    Plug 'yuttie/inkstained-vim'
+    Plug 'mhartington/oceanic-next'
 
-    " Languages {{{
-      Plug 'w0rp/ale', enabled_filetypes
-      Plug 'sheerun/vim-polyglot'
-      Plug 'metakirby5/codi.vim', { 'on': 'Codi' } " Quokka
+    Plug 'ap/vim-css-color'
+    Plug 'itchyny/lightline.vim'
+    Plug 'junegunn/goyo.vim',  { 'on': 'Goyo' }
+    Plug 'junegunn/limelight.vim', { 'on': 'Limelight' }
+    " Plug 'arcticicestudio/nord-vim'
+    " Plug 'mhinz/vim-startify'
+  " }}}}
+  " Languages {{{
+    Plug 'w0rp/ale', enabled_filetypes
 
-      " Javascript {{{
-        Plug 'othree/javascript-libraries-syntax.vim', enabled_filetypes
-        Plug 'jelera/vim-javascript-syntax', enabled_filetypes
-        Plug 'heavenshell/vim-jsdoc', { 'on': 'JsDoc' }
-      " " }}}
+    Plug 'sheerun/vim-polyglot'
+    " Plug 'metakirby5/codi.vim', { 'on': 'Codi' } " Quokka
 
-      Plug 'HerringtonDarkholme/yats.vim', enabled_filetypes
-      Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
-      Plug 'Shougo/deoplete.nvim', enabled_filetypes " For async completion
-      Plug 'Shougo/denite.nvim', enabled_filetypes " For Denite features
+    " Plug 'leafgarland/typescript-vim'
+    Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
+    Plug 'Shougo/deoplete.nvim', enabled_filetypes
+  " }}}
+  " Utils {{{
+    Plug '/usr/local/bin/fzf'
+    Plug 'cohama/lexima.vim'                 " autoclose parens
+    Plug 'junegunn/fzf.vim'
+    Plug 'junegunn/vim-easy-align'
+    Plug 'mattn/emmet-vim'
+    Plug 'tmhedberg/matchit'                 " extended % matching for HTML, LaTeX, and many other languages
+    Plug 'tomtom/tcomment_vim'               " file-type sensible comments
+    Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-repeat'
+    Plug 'tpope/vim-surround'
+    " Plug 'jremmen/vim-ripgrep'
+  " }}}
+  " Extras {{{
+    Plug 'christoomey/vim-tmux-navigator'
+  " }}}
 
-    " }}}
-
-    " Utils {{{
-      Plug '/usr/local/bin/fzf'
-      Plug 'airblade/vim-gitgutter'
-      Plug 'cohama/lexima.vim'                 " autoclose parens
-      Plug 'gregsexton/gitv', {'on': ['Gitv']} " gitk extension for vim
-      Plug 'junegunn/fzf.vim'
-      Plug 'junegunn/vim-easy-align'
-      Plug 'mattn/emmet-vim'
-      Plug 'tmhedberg/matchit'                 " extended % matching for HTML, LaTeX, and many other languages
-      Plug 'tomtom/tcomment_vim'               " file-type sensible comments
-      Plug 'tpope/vim-fugitive'
-      Plug 'tpope/vim-repeat'
-      Plug 'tpope/vim-surround'
-      Plug 'https://github.com/Alok/notational-fzf-vim', { 'on': 'NV' }
-      Plug 'junegunn/gv.vim'
-      Plug 'junegunn/vim-peekaboo'
-      Plug 'jremmen/vim-ripgrep'
-    " }}}
-
-    " Extras {{{
-      Plug 'Shougo/vimproc.vim', { 'do': 'make -f make_mac.mak' } " interactive command execution
-      Plug 'christoomey/vim-tmux-navigator'
-      Plug 'edkolev/tmuxline.vim'
-      Plug 'wakatime/vim-wakatime'
-    " }}}
-
-    call plug#end()
+  call plug#end()
 " }}}
-
 " Set Declarations {{{
-        filetype indent on
-        filetype plugin indent on
+  filetype indent on
+  filetype plugin indent on
 
-        highlight Comment cterm=italic
+  highlight Comment cterm=italic
 
-        let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-        let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-        let &t_ZH="\e[3m"
-        let &t_ZR="\e[23m"
-        let g:nv_search_paths = ['~/notes']
-        let g:python_host_prog='/usr/bin/python'
+  let g:nv_search_paths = ['~/notes']
+  let g:python_host_prog='/usr/bin/python'
+  hi SpellBad  gui=undercurl guisp=red term=undercurl cterm=undercurl
 
-        set t_Co=256
-        " set t_8b=[48;2;%lu;%lu;%lum
-        " set t_8f=[38;2;%lu;%lu;%lum
-        set termguicolors
-        set encoding=utf8
-        set autoread                                      " if file changes outside of vim, redraw buffer
-        set colorcolumn=101
-        set completeopt+=preview
-        set diffopt+=vertical
-        set expandtab
-        set foldlevel=1
-        set foldmethod=syntax
-        set formatoptions+=j                              " delete comment character when joining commented lines
-        set gdefault
-        set hidden                                        " enable multiple unsaved buffers to be maintained
-        set ignorecase
-        set laststatus=2                                  " always show the statusline
-        set lazyredraw
-        set list
-        set listchars=tab:>-,trail:~,extends:>,precedes:< " ,space:. " mark all kinds of whitespace
-        set mouse=a
-        set nolazyredraw                                  " fix for redraw bug. use with 'Native fullscreen windows' disabled on iterm
-        set noshowmode
-        set noswapfile
-        set number
-        set relativenumber
-        set ruler
-        set shiftwidth=2
-        set showcmd
-        set showmatch
-        set signcolumn=yes
-        set smartcase
-        set smartindent
-        set softtabstop=2
-        set tabstop=2
-        set timeoutlen=400                                " careful! don't render NERDTreeToggle unreachable!
-        set undofile
-        set wrap
-        set rtp+=/usr/local/opt/fzf
+  let &t_Cs = "\e[4:3m"
+  let &t_Ce = "\e[4:0m"
+  set termguicolors
+  set encoding=utf8
+  set autoread                                      " if file changes outside of vim, redraw buffer
+  set completeopt+=preview
+  set diffopt+=vertical
+  set expandtab
+  set foldlevel=1
+  set foldmethod=syntax
+  set formatoptions+=j                              " delete comment character when joining commented lines
+  set gdefault
+  set hidden                                        " enable multiple unsaved buffers to be maintained
+  set ignorecase
+  set laststatus=2                                  " always show the statusline
+  set lazyredraw
+  set list
+  set listchars=tab:>-,trail:~,extends:>,precedes:< " ,space:. " mark all kinds of whitespace
+  set mouse=a
+  set nolazyredraw                                  " fix for redraw bug. use with 'Native fullscreen windows' disabled on iterm
+  set noshowmode
+  set noswapfile
+  set number
+  set relativenumber
+  set ruler
+  set shiftwidth=2
+  set showcmd
+  set showmatch
+  set signcolumn=yes
+  set smartcase
+  set smartindent
+  set softtabstop=2
+  set tabstop=2
+  set timeoutlen=400                                " careful! don't render NERDTreeToggle unreachable!
+  set undofile
+  set wrap
+  set rtp+=/usr/local/opt/fzf
 
-        syntax enable
+  syntax enable
 " }}}
-
 " Mappings {{{
-
   let mapleader=','
   nmap 0 ^
   nmap E $
@@ -150,7 +122,6 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
   nnoremap <leader>e :e ~/.config/nvim/init.vim<CR>
   nnoremap <leader>q :bd<CR>
   nnoremap <leader>R :e!<CR>
-  nnoremap rr :vertical resize 105<CR>
 
   " nnoremap <leader><CR> :NERDTreeToggle<CR>
   nnoremap <leader>gs :Gstatus<CR>
@@ -159,8 +130,10 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
   vmap <CR> <Plug>(LiveEasyAlign)
   " list matches
   nnoremap <leader>lm :vim // %<CR>:copen<CR>
-" }}}
 
+  " visually swap two words
+  :vnoremap <C-X> <Esc>`.` `gvP``P
+" }}}
 " Terminal (neovim) {{{
   " Window split settings
   highlight TermCursor ctermfg=red guifg=red
@@ -173,25 +146,7 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
   " Terminal settings
   tnoremap <Leader><ESC> <C-\><C-n>
   tnoremap <ESC> <C-\><C-n>
-  " tnoremap <C-h> <C-\><C-n><C-h>
-  " tnoremap <C-j> <C-\><C-n><C-j>
-  " tnoremap <C-k> <C-\><C-n><C-k>
-  " tnoremap <C-l> <C-\><C-n><C-l>
 " }}}
-
-" Easymotion {{{
-  " <Leader>f{char} to move to {char}
-  map <leader>f <Plug>(easymotion-bd-f)
-  nmap <leader>f <Plug>(easymotion-overwin-f)
-
-  map <Leader>L <Plug>(easymotion-bd-jk)
-  nmap <Leader>L <Plug>(easymotion-overwin-line)
-
-  " Move to word
-  map  <Leader>w <Plug>(easymotion-bd-w)
-  nmap <Leader>w <Plug>(easymotion-overwin-w)
-" }}}
-
 " FZF {{{
   nnoremap <c-b> :Buffers<CR>
   nnoremap <c-f> :Files<CR>
@@ -203,7 +158,7 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
 
   command! -bang -nargs=* Rg
     \ call fzf#vim#grep(
-    \   'rg --column --line-number --no-heading --color=always '
+    \   'rg --column --line-number --no-heading --color=always --pretty --smart-case '
     \ . <q-args>, 1,
     \   <bang>0 ? fzf#vim#with_preview('up:60%')
     \           : fzf#vim#with_preview('right:50%:hidden', '?'),
@@ -227,50 +182,66 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
         \ 'spinner': ['fg', 'Label'],
         \ 'header':  ['fg', 'Comment'] }
 
-  autocmd! FileType fzf
-  autocmd FileType fzf nmap <C-c> :bw<CR>
-  autocmd  FileType fzf set laststatus=0 noshowmode noruler
-    \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 " }}}
-
-  " Linters + Formatters {{{
+" Linters + Formatters {{{
   autocmd FileType html setlocal formatprg=js-beautify\ --type=html\ -A=aligned-multiline
   autocmd FileType xml setlocal formatprg=js-beautify\ --xml\ -A\ force-aligned\ -w\ 100\ --indent-size\ 2
   autocmd FileType less setlocal formatprg=js-beautify\ --css\ -A\ force-aligned\ -w\ 100\ --indent-size\ 2
 
   " don't lint HTML
   let g:ale_linters = {
-        \ 'typescript': ['tslint'],
         \ 'html': [],
+        \ 'javascript': ['eslint'],
         \ 'haskell': [ 'hlint', 'hdevtools', 'hfmt'],
         \ }
 
   let g:ale_fixers = {
         \ 'javascript': ['prettier'],
-        \ 'typescript': ['prettier', 'tslint'],
+        \ 'javascript.jsx': ['prettier'],
+        \ 'typescript': ['tslint'],
         \ 'json': ['prettier'],
         \ 'less': ['prettier'],
-        \ 'html': ['prettier']
+        \ 'html': ['prettier'],
+        \ '*': ['remove_trailing_lines', 'trim_whitespace'],
+        \ }
+
+  let g:ale_pattern_options = {
+        \ 'node_modules/': { 'ale_enabled': 0 }
         \ }
 
   " use local config
   let g:ale_javascript_prettier_use_local_config = 1
 
+  " open the quickfix list instead of just displaying one line
+  " let g:ale_open_list = 1
+
+  let g:ale_list_window_size = 10
+  let g:ale_keep_list_window_open = 1
+
+  nnoremap ep :ALEPrevious<CR>
+  nnoremap en :ALENext<CR>
+  nnoremap ed :ALEDetail<CR>
+  nnoremap eh :ALEHover<CR>
+
   " primitive html auto-format
   vnoremap <leader>x JV:s/>\s*</>\r</<CR>
 
-  nnoremap <leader>f :ALEFix<CR>
-
-  vnoremap <leader>p :!prettier<CR>
-  " }}}
-
-  " Misc {{{
+  nnoremap <leader>f :!npx tslint --fix<CR>
+  " nnoremap <leader>p :%!prettier --single-quote --trailing-comma es5  %<CR>
+  nnoremap <leader>p :silent exec '%!prettier --single-quote --trailing-comma=all --parser='. &filetype<CR>
+" }}}
+" Misc {{{
   let g:deoplete#enable_at_startup=1
   let g:startify_change_to_vcs_root=1
   let g:gitgutter_enabled=1
   let g:gitgutter_signs=1
   let g:gitgutter_hightlight_lines=1
   let g:gruvbox_italic=1
+
+  let g:goyo_width=120
+  let g:goyo_linenr=1
+
+  set grepprg=ag\ --vimgrep\ $*
 
   command! Invbg call helpers#ReverseBackground()
   noremap <leader>co :Invbg<CR>
@@ -286,8 +257,8 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
         \'win'  : '#I #W',
         \'cwin' : '#I #W',
         \'y'    : '%a %R',
-        \'z'    : '',
-        \'x'    : '#(tmux-spotify-info)'}
+        \'z'    : '',}
+        " \'x'    : '#(tmux-spotify-info)'}
 
   let g:tmuxline_powerline_separators = 0
 
@@ -300,23 +271,49 @@ let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
   " prevent opening 1 when I mean :e!
   autocmd BufNew 1 throw 'You ment to :e! but did :e1'
 
+  " \ 'colorscheme': 'seoul256',
   " \ 'colorscheme': 'inkstained',
   let g:lightline = {
-      \ 'colorscheme': 'seoul256',
-      \ 'active': {
-      \   'left': [[ 'mode', 'paste' ],
-      \            [ 'gitbranch', 'readonly', 'filename', 'modified' ]]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'fugitive#head'
-      \ },
-      \ 'separator':    { 'left': '', 'right': '' },
-      \ 'subseparator': { 'left': '', 'right': '' },
-      \ }
+        \ 'active': {
+        \   'left': [[ 'mode', 'paste' ],
+        \            [ 'gitbranch', 'readonly', 'filename', 'modified' ]]
+        \ },
+        \ 'component_function': {
+        \   'gitbranch': 'fugitive#head'
+        \ },
+        \ }
 
-nnoremap gp :silent %!prettier --stdin --stdin-filepath % --trailing-comma all --single-quote<CR>
+      " \ 'separator':    { 'left': '', 'right': '' },
+      " \ 'subseparator': { 'left': '', 'right': '' },
 
-" 233 darkerst, 239 lightest
-let g:seoul256_background = 234
-colo gruvbox
-se bg=dark
+  " 233 darkerst, 239 lightest
+  let g:seoul256_background=234
+  let g:gruvbox_bold=0
+  colo OceanicNext
+  " se bg=dark
+
+  nmap <c-n> <plug>(YoinkPostPasteSwapBack)
+  nmap <c-p> <plug>(YoinkPostPasteSwapForward)
+
+  " fix the cursor color
+  if &term =~ "xterm\\|rxvt"
+    " use an orange cursor in insert mode
+    let &t_SI = "\<Esc>]12;orange\x7"
+    " use a red cursor otherwise
+    let &t_EI = "\<Esc>]12;red\x7"
+    silent !echo -ne "\033]12;red\007"
+    " reset cursor when vim exits
+    autocmd VimLeave * silent !echo -ne "\033]112\007"
+    " use \003]12;gray\007 for gnome-terminal
+  endif
+
+
+  " sort imports alphabetically
+  function! SortImports()
+    let imprts = getline('.')
+    echo 'GOT' . imprts
+  endfunction
+  :command! SortImports :call SortImports()
+  :nnoremap <c-n> :call :SortImports<cr>
+" }}}
+

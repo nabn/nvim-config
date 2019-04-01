@@ -11,6 +11,7 @@ function helpers#ReverseBackground()
   exe "set syntax=" . Mysyn
 endfunction
 
+" Delete all background buffers
 function helpers#DeleteHiddenBuffers()
   let tpbl=[]
   call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
@@ -24,9 +25,9 @@ function! helpers#SwapTestFile()
   let fileName = expand('%d')
 
   if fileName =~ "spec"
-    execute "edit " . substitute(fileName, ".spec", "", "")
+    execute "edit " . substitute(fileName, "\.spec\.", "\.", "")
   else
-    execute "edit " . substitute(fileName, ".ts", ".spec.ts", "")
+    execute "edit " . substitute(fileName, "\.ts$", ".spec.ts", "")
   endif
 endfunction
 

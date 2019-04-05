@@ -4,7 +4,7 @@
 
   call plug#begin('~/nvim/plugged')
 
-  " UI {{{{
+" UI {{{{
     Plug 'morhetz/gruvbox'
     Plug 'yuttie/inkstained-vim'
     Plug 'mhartington/oceanic-next'
@@ -13,20 +13,15 @@
     Plug 'itchyny/lightline.vim'
     Plug 'junegunn/goyo.vim',  { 'on': 'Goyo' }
     Plug 'junegunn/limelight.vim', { 'on': 'Limelight' }
-    " Plug 'arcticicestudio/nord-vim'
-    " Plug 'mhinz/vim-startify'
-  " }}}}
-  " Languages {{{
+" }}}}
+" Languages {{{
     Plug 'w0rp/ale', enabled_filetypes
-
     Plug 'sheerun/vim-polyglot'
-    " Plug 'metakirby5/codi.vim', { 'on': 'Codi' } " Quokka
-
-    " Plug 'leafgarland/typescript-vim'
-    Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
-    Plug 'Shougo/deoplete.nvim', enabled_filetypes
-  " }}}
-  " Utils {{{
+    Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+    " Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
+    " Plug 'Shougo/deoplete.nvim', enabled_filetypes
+" }}}
+" Utils {{{
     Plug '/usr/local/bin/fzf'
     Plug 'cohama/lexima.vim'                 " autoclose parens
     Plug 'junegunn/fzf.vim'
@@ -37,11 +32,10 @@
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
-    " Plug 'jremmen/vim-ripgrep'
-  " }}}
-  " Extras {{{
+" }}}
+" Extras {{{
     Plug 'christoomey/vim-tmux-navigator'
-  " }}}
+" }}}
 
   call plug#end()
 " }}}
@@ -54,6 +48,8 @@
   let g:nv_search_paths = ['~/notes']
   let g:python_host_prog='/usr/bin/python'
   hi SpellBad  gui=undercurl guisp=red term=undercurl cterm=undercurl
+
+  set shellcmdflag=-ic                              " https://stackoverflow.com/a/4642855/10926788
 
   let &t_Cs = "\e[4:3m"
   let &t_Ce = "\e[4:0m"
@@ -100,7 +96,6 @@
   nmap 0 ^
   nmap E $
 
-  nnoremap <leader>a :Rg<Space>
   let g:rg_highlight='true'
   let g:rg_derive_root='true'
 
@@ -123,27 +118,27 @@
   nnoremap <leader>q :bd<CR>
   nnoremap <leader>R :e!<CR>
 
-  " nnoremap <leader><CR> :NERDTreeToggle<CR>
+" nnoremap <leader><CR> :NERDTreeToggle<CR>
   nnoremap <leader>gs :Gstatus<CR>
   xmap ga <Plug>(EasyAlign)
   nmap ga <Plug>(EasyAlign)
   vmap <CR> <Plug>(LiveEasyAlign)
-  " list matches
+" list matches
   nnoremap <leader>lm :vim // %<CR>:copen<CR>
 
-  " visually swap two words
+" visually swap two words
   :vnoremap <C-X> <Esc>`.` `gvP``P
 " }}}
 " Terminal (neovim) {{{
-  " Window split settings
+" Window split settings
   highlight TermCursor ctermfg=red guifg=red
   set splitbelow
   set splitright
-  " terminal open in split
+" terminal open in split
   command! -nargs=* VT vsplit | terminal <args>
   command! -nargs=* T split | terminal <args>
 
-  " Terminal settings
+" Terminal settings
   tnoremap <Leader><ESC> <C-\><C-n>
   tnoremap <ESC> <C-\><C-n>
 " }}}
@@ -166,7 +161,7 @@
 
   let g:fzf_commits_log_options = '--format="%C(white)%h%>(15,trunc)%C(blue)%aN%>(15,trunc)%C(yellow)%ar %C(green)%s"'
 
-  " make FZF use colorscheme colors
+" make FZF use colorscheme colors
   let g:fzf_colors =
         \ { 'fg':    ['fg', 'Normal'],
         \ 'bg':      ['bg', 'Normal'],
@@ -188,7 +183,7 @@
   autocmd FileType xml setlocal formatprg=js-beautify\ --xml\ -A\ force-aligned\ -w\ 100\ --indent-size\ 2
   autocmd FileType less setlocal formatprg=js-beautify\ --css\ -A\ force-aligned\ -w\ 100\ --indent-size\ 2
 
-  " don't lint HTML
+" don't lint HTML
   let g:ale_linters = {
         \ 'html': [],
         \ 'javascript': ['eslint'],
@@ -209,11 +204,11 @@
         \ 'node_modules/': { 'ale_enabled': 0 }
         \ }
 
-  " use local config
+" use local config
   let g:ale_javascript_prettier_use_local_config = 1
 
-  " open the quickfix list instead of just displaying one line
-  " let g:ale_open_list = 1
+" open the quickfix list instead of just displaying one line
+" let g:ale_open_list = 1
 
   let g:ale_list_window_size = 10
   let g:ale_keep_list_window_open = 1
@@ -223,11 +218,12 @@
   nnoremap ed :ALEDetail<CR>
   nnoremap eh :ALEHover<CR>
 
-  " primitive html auto-format
+" primitive html auto-format
   vnoremap <leader>x JV:s/>\s*</>\r</<CR>
 
-  nnoremap <leader>f :!npx tslint --fix<CR>
-  " nnoremap <leader>p :%!prettier --single-quote --trailing-comma es5  %<CR>
+" nnoremap <leader>f :!npx tslint --fix<CR>
+  nnoremap <leader>f :ALEFix<CR>
+" nnoremap <leader>p :%!prettier --single-quote --trailing-comma es5  %<CR>
   nnoremap <leader>p :silent exec '%!prettier --single-quote --trailing-comma=all --parser='. &filetype<CR>
 " }}}
 " Misc {{{
@@ -241,16 +237,14 @@
   let g:goyo_width=120
   let g:goyo_linenr=1
 
-  set grepprg=ag\ --vimgrep\ $*
-
   command! Invbg call helpers#ReverseBackground()
   noremap <leader>co :Invbg<CR>
 
-  if has('nvim') " fix for nvim on iterm
+  if has('nvim')                                    " fix for nvim on iterm
     nmap <BS> <C-W>h
   endif
 
-  " let g:tmuxline_preset='tmux'
+" let g:tmuxline_preset='tmux'
   let g:tmuxline_preset = {
         \'a'    : '#S',
         \'b'    : '#{?window_zoomed_flag,#[fg=red]} ',
@@ -258,7 +252,7 @@
         \'cwin' : '#I #W',
         \'y'    : '%a %R',
         \'z'    : '',}
-        " \'x'    : '#(tmux-spotify-info)'}
+" \'x'    : '#(tmux-spotify-info)'}
 
   let g:tmuxline_powerline_separators = 0
 
@@ -268,11 +262,11 @@
   inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
   let g:used_javascript_libs = 'angularjs'
 
-  " prevent opening 1 when I mean :e!
+" prevent opening 1 when I mean :e!
   autocmd BufNew 1 throw 'You ment to :e! but did :e1'
 
-  " \ 'colorscheme': 'seoul256',
-  " \ 'colorscheme': 'inkstained',
+" \ 'colorscheme': 'seoul256',
+" \ 'colorscheme': 'inkstained',
   let g:lightline = {
         \ 'active': {
         \   'left': [[ 'mode', 'paste' ],
@@ -283,37 +277,105 @@
         \ },
         \ }
 
-      " \ 'separator':    { 'left': '', 'right': '' },
-      " \ 'subseparator': { 'left': '', 'right': '' },
+" \ 'separator':    { 'left': '', 'right': '' },
+" \ 'subseparator': { 'left': '', 'right': '' },
 
-  " 233 darkerst, 239 lightest
+" 233 darkerst, 239 lightest
   let g:seoul256_background=234
   let g:gruvbox_bold=0
   colo OceanicNext
-  " se bg=dark
+" se bg=dark
 
   nmap <c-n> <plug>(YoinkPostPasteSwapBack)
   nmap <c-p> <plug>(YoinkPostPasteSwapForward)
 
-  " fix the cursor color
+" fix the cursor color
   if &term =~ "xterm\\|rxvt"
-    " use an orange cursor in insert mode
+" use an orange cursor in insert mode
     let &t_SI = "\<Esc>]12;orange\x7"
-    " use a red cursor otherwise
+" use a red cursor otherwise
     let &t_EI = "\<Esc>]12;red\x7"
     silent !echo -ne "\033]12;red\007"
-    " reset cursor when vim exits
+" reset cursor when vim exits
     autocmd VimLeave * silent !echo -ne "\033]112\007"
-    " use \003]12;gray\007 for gnome-terminal
+" use \003]12;gray\007 for gnome-terminal
   endif
 
 
-  " sort imports alphabetically
+" sort imports alphabetically
   function! SortImports()
     let imprts = getline('.')
     echo 'GOT' . imprts
   endfunction
   :command! SortImports :call SortImports()
   :nnoremap <c-n> :call :SortImports<cr>
+
+  set grepprg=rg\ --vimgrep\ --no-heading
+  set grepformat=%f:%l:%c:%m
 " }}}
 
+" CoC {{{
+  inoremap <silent><expr> <c-space> coc#refresh()
+  set cmdheight=2
+  set updatetime=300
+  set shortmess+=c
+  set signcolumn=yes
+
+  " Use tab for trigger completion with characters ahead and navigate.
+  " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? "\<C-n>" :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ coc#refresh()
+  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+  " Use <cr> for confirm completion, `<C-g>u` means break undo chain at current position.
+  " Coc only does snippet and additional edit on confirm.
+  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+  " Use `[c` and `]c` for navigate diagnostics
+  nmap <silent> [c <Plug>(coc-diagnostic-prev)
+  nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+  " Remap keys for gotos
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> gr <Plug>(coc-references)
+
+  " Use K for show documentation in preview window
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+  function! s:show_documentation()
+    if &filetype == 'vim'
+      execute 'h '.expand('<cword>')
+    else
+      call CocAction('doHover')
+    endif
+  endfunction
+
+  augroup mygroup
+    autocmd!
+    " Setup formatexpr specified filetype(s).
+    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+    " Update signature help on jump placeholder
+    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  augroup end
+
+  command! -nargs=0 Format :call CocAction('format')
+  let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste','gitbranch'],
+      \             [ 'cocstatus', 'readonly', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'cocstatus': 'coc#status',
+      \   'gitbranch': 'helpers#GetTicketNumber'
+      \ },
+      \ }
+
+  inoremap <expr> <TAB> pumvisible() ? "\<C-y>" : "\<TAB>"
+  let g:coc_snippet_next = '<TAB>'
+  let g:coc_snippet_prev = '<S-TAB>'
+"}}}

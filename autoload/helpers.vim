@@ -31,3 +31,12 @@ function! helpers#SwapTestFile()
   endif
 endfunction
 
+function! helpers#GetTicketNumber()
+  let branch_name = fugitive#head()
+  let m =  matchstr(branch_name, 'NSAT-\d\+')
+  if (m)
+    return m
+  else
+    return branch_name
+  endif
+endfunction

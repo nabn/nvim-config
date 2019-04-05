@@ -1,4 +1,4 @@
-function helpers#ReverseBackground()
+function! helpers#ReverseBackground()
   let Mysyn=&syntax
   if &bg=="light"
     se bg=dark
@@ -12,7 +12,7 @@ function helpers#ReverseBackground()
 endfunction
 
 " Delete all background buffers
-function helpers#DeleteHiddenBuffers()
+function! helpers#DeleteHiddenBuffers()
   let tpbl=[]
   call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
   for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
@@ -33,10 +33,10 @@ endfunction
 
 function! helpers#GetTicketNumber()
   let branch_name = fugitive#head()
-  let m =  matchstr(branch_name, 'NSAT-\d\+')
-  if (m)
-    return m
-  else
+  let mat = matchstr(branch_name, '^NSAT-\d\+')
+  if(mat == '')
     return branch_name
+  else
+    return mat
   endif
 endfunction

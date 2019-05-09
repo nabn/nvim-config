@@ -8,6 +8,7 @@
     Plug 'morhetz/gruvbox'
     Plug 'yuttie/inkstained-vim'
     Plug 'mhartington/oceanic-next'
+    Plug 'chriskempson/base16-vim'
 
     Plug 'ap/vim-css-color'
     Plug 'itchyny/lightline.vim'
@@ -18,8 +19,6 @@
     Plug 'w0rp/ale', enabled_filetypes
     Plug 'sheerun/vim-polyglot'
     Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
-    " Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
-    " Plug 'Shougo/deoplete.nvim', enabled_filetypes
 " }}}
 " Utils {{{
     Plug '/usr/local/bin/fzf'
@@ -32,11 +31,9 @@
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
-" }}}
-" Extras {{{
+    Plug 'rhysd/git-messenger.vim'
     Plug 'christoomey/vim-tmux-navigator'
 " }}}
-
   call plug#end()
 " }}}
 " Set Declarations {{{
@@ -49,10 +46,8 @@
   let g:python_host_prog='/usr/bin/python'
   hi SpellBad  gui=undercurl guisp=red term=undercurl cterm=undercurl
 
-  set shellcmdflag=-ic                              " https://stackoverflow.com/a/4642855/10926788
-
-  let &t_Cs = "\e[4:3m"
-  let &t_Ce = "\e[4:0m"
+  set shellcmdflag=-ic                              " make Vim’s :! shell behave like your command prompt.
+                                                    " https://stackoverflow.com/a/4642855/10926788
   set termguicolors
   set encoding=utf8
   set autoread                                      " if file changes outside of vim, redraw buffer
@@ -60,15 +55,15 @@
   set diffopt+=vertical
   set expandtab
   set foldlevel=1
-  set foldmethod=syntax
+  set foldmethod=indent                             " foldmethod syntax along with vim-javascript make things horribly slow
   set formatoptions+=j                              " delete comment character when joining commented lines
-  set gdefault
+  set gdefault                                      " set global flag as default for :substitute
   set hidden                                        " enable multiple unsaved buffers to be maintained
   set ignorecase
   set laststatus=2                                  " always show the statusline
   set lazyredraw
   set list
-  set listchars=tab:>-,trail:~,extends:>,precedes:< " ,space:. " mark all kinds of whitespace
+  set listchars=tab:>-,trail:~,extends:>,precedes:< " mark all kinds of whitespace
   set mouse=a
   set nolazyredraw                                  " fix for redraw bug. use with 'Native fullscreen windows' disabled on iterm
   set noshowmode
@@ -78,13 +73,13 @@
   set ruler
   set shiftwidth=2
   set showcmd
-  set showmatch
-  set signcolumn=yes
+  set showtabline=2                                 " always show tab line
+  set signcolumn=auto:2
   set smartcase
   set smartindent
   set softtabstop=2
   set tabstop=2
-  set timeoutlen=400                                " careful! don't render NERDTreeToggle unreachable!
+  set timeoutlen=100
   set undofile
   set wrap
   set rtp+=/usr/local/opt/fzf
@@ -118,6 +113,8 @@
   nnoremap <leader>q :bd<CR>
   nnoremap <leader>R :e!<CR>
 
+  nnoremap <leader>l :Lexplore<cr>
+
 " nnoremap <leader><CR> :NERDTreeToggle<CR>
   nnoremap <leader>gs :Gstatus<CR>
   xmap ga <Plug>(EasyAlign)
@@ -127,7 +124,7 @@
   nnoremap <leader>lm :vim // %<CR>:copen<CR>
 
 " visually swap two words
-  :vnoremap <C-X> <Esc>`.` `gvP``P
+  vnoremap <C-X> <Esc>`.` `gvP``P
 " }}}
 " Terminal (neovim) {{{
 " Window split settings
@@ -232,10 +229,10 @@
   let g:gitgutter_enabled=1
   let g:gitgutter_signs=1
   let g:gitgutter_hightlight_lines=1
-  let g:gruvbox_italic=1
+  let g:netrw_winsize=15
 
   let g:goyo_width=120
-  let g:goyo_linenr=1
+  " let g:goyo_linenr=1
 
   command! Invbg call helpers#ReverseBackground()
   noremap <leader>co :Invbg<CR>
@@ -258,8 +255,8 @@
 
   nmap tt :call helpers#SwapTestFile()<CR>
 
-  inoremap <S-Tab> <C-x><C-o>
-  inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+  " inoremap <S-Tab> <C-x><C-o>
+  " inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
   let g:used_javascript_libs = 'angularjs'
 
 " prevent opening 1 when I mean :e!
@@ -277,46 +274,17 @@
         \ },
         \ }
 
-" \ 'separator':    { 'left': '', 'right': '' },
-" \ 'subseparator': { 'left': '', 'right': '' },
-
-" 233 darkerst, 239 lightest
-  let g:seoul256_background=234
+  " 233 darkerst, 239 lightest
   let g:gruvbox_bold=0
-  colo OceanicNext
-" se bg=dark
-
-  nmap <c-n> <plug>(YoinkPostPasteSwapBack)
-  nmap <c-p> <plug>(YoinkPostPasteSwapForward)
-
-" fix the cursor color
-  if &term =~ "xterm\\|rxvt"
-" use an orange cursor in insert mode
-    let &t_SI = "\<Esc>]12;orange\x7"
-" use a red cursor otherwise
-    let &t_EI = "\<Esc>]12;red\x7"
-    silent !echo -ne "\033]12;red\007"
-" reset cursor when vim exits
-    autocmd VimLeave * silent !echo -ne "\033]112\007"
-" use \003]12;gray\007 for gnome-terminal
-  endif
-
-
-" sort imports alphabetically
-  function! SortImports()
-    let imprts = getline('.')
-    echo 'GOT' . imprts
-  endfunction
-  :command! SortImports :call SortImports()
-  :nnoremap <c-n> :call :SortImports<cr>
+  let g:gruvbox_italic=1
+  colorscheme gruvbox
 
   set grepprg=rg\ --vimgrep\ --no-heading
-  set grepformat=%f:%l:%c:%m
+  nnoremap <leader>a :Rg<space>
 " }}}
-
 " CoC {{{
   inoremap <silent><expr> <c-space> coc#refresh()
-  set cmdheight=2
+  " set cmdheight=2
   set updatetime=300
   set shortmess+=c
   set signcolumn=yes
@@ -329,10 +297,6 @@
         \ coc#refresh()
   inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-  " Use <cr> for confirm completion, `<C-g>u` means break undo chain at current position.
-  " Coc only does snippet and additional edit on confirm.
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
   " Use `[c` and `]c` for navigate diagnostics
   nmap <silent> [c <Plug>(coc-diagnostic-prev)
   nmap <silent> ]c <Plug>(coc-diagnostic-next)
@@ -342,6 +306,7 @@
   nmap <silent> gy <Plug>(coc-type-definition)
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
+  nmap <silent> rn <Plug>(coc-rename)
 
   " Use K for show documentation in preview window
   nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -357,7 +322,7 @@
   augroup mygroup
     autocmd!
     " Setup formatexpr specified filetype(s).
-    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+    autocmd FileType typescript,json,javascript setl formatexpr=CocAction('formatSelected')
     " Update signature help on jump placeholder
     autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
   augroup end
@@ -374,8 +339,7 @@
       \   'gitbranch': 'helpers#GetTicketNumber'
       \ },
       \ }
-
-  inoremap <expr> <TAB> pumvisible() ? "\<C-y>" : "\<TAB>"
-  let g:coc_snippet_next = '<TAB>'
-  let g:coc_snippet_prev = '<S-TAB>'
 "}}}
+
+let base16colorspace=256
+set nofoldenable

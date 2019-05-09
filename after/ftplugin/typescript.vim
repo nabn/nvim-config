@@ -5,4 +5,4 @@ setlocal keywordprg=:ALEHover
 " setlocal colorcolumn=101
 
 nnoremap rr :vertical resize 107<CR>
-nnoremap gd :TSDef<CR>
+" nnoremap gd :TSDef<CR>

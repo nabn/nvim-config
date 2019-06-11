@@ -6,3 +6,5 @@ setlocal keywordprg=:ALEHover
 
 nnoremap rr :vertical resize 107<CR>
 " nnoremap gd :TSDef<CR>
+
+nnoremap gp :silent %!prettier --stdin --stdin-filepath % --parser=typescript --semi=false --single-quote --trailing-comma=all<CR>

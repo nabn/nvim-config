@@ -1,6 +1,6 @@
-" vim:foldmethod=marker:foldlevel=0
+" vim:foldmethod=marker:foldlevel=0:foldenable
 " Plugins {{{
-  let enabled_filetypes = { 'for': ['javascript', 'typescript', 'html'] }
+  let enabled_filetypes = { 'for': ['javascript', 'javascript.jsx', 'typescript', 'typescript.jsx', 'html'] }
 
   call plug#begin('~/nvim/plugged')
 
@@ -8,9 +8,11 @@
     Plug 'morhetz/gruvbox'
     Plug 'yuttie/inkstained-vim'
     Plug 'mhartington/oceanic-next'
-    Plug 'chriskempson/base16-vim'
+    Plug 'edkolev/tmuxline.vim'
+    " Plug 'chriskempson/base16-vim'
 
     Plug 'ap/vim-css-color'
+    Plug 'shinchu/lightline-gruvbox.vim'
     Plug 'itchyny/lightline.vim'
     Plug 'junegunn/goyo.vim',  { 'on': 'Goyo' }
     Plug 'junegunn/limelight.vim', { 'on': 'Limelight' }
@@ -18,21 +20,22 @@
 " Languages {{{
     Plug 'w0rp/ale', enabled_filetypes
     Plug 'sheerun/vim-polyglot'
-    Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+    Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
+    Plug 'amadeus/vim-xml'
 " }}}
 " Utils {{{
     Plug '/usr/local/bin/fzf'
+    Plug 'christoomey/vim-tmux-navigator'
     Plug 'cohama/lexima.vim'                 " autoclose parens
     Plug 'junegunn/fzf.vim'
     Plug 'junegunn/vim-easy-align'
     Plug 'mattn/emmet-vim'
+    Plug 'rhysd/git-messenger.vim'
     Plug 'tmhedberg/matchit'                 " extended % matching for HTML, LaTeX, and many other languages
     Plug 'tomtom/tcomment_vim'               " file-type sensible comments
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
-    Plug 'rhysd/git-messenger.vim'
-    Plug 'christoomey/vim-tmux-navigator'
 " }}}
   call plug#end()
 " }}}
@@ -43,7 +46,7 @@
   highlight Comment cterm=italic
 
   let g:nv_search_paths = ['~/notes']
-  let g:python_host_prog='/usr/bin/python'
+  let g:python_host_prog='/usr/local/bin/python'
   hi SpellBad  gui=undercurl guisp=red term=undercurl cterm=undercurl
 
   set shellcmdflag=-ic                              " make Vim’s :! shell behave like your command prompt.
@@ -60,12 +63,14 @@
   set gdefault                                      " set global flag as default for :substitute
   set hidden                                        " enable multiple unsaved buffers to be maintained
   set ignorecase
+  set inccommand=nosplit
   set laststatus=2                                  " always show the statusline
   set lazyredraw
   set list
   set listchars=tab:>-,trail:~,extends:>,precedes:< " mark all kinds of whitespace
   set mouse=a
   set nolazyredraw                                  " fix for redraw bug. use with 'Native fullscreen windows' disabled on iterm
+  set nomodeline
   set noshowmode
   set noswapfile
   set number
@@ -74,17 +79,21 @@
   set shiftwidth=2
   set showcmd
   set showtabline=2                                 " always show tab line
-  set signcolumn=auto:2
+  set signcolumn=auto
   set smartcase
   set smartindent
   set softtabstop=2
   set tabstop=2
-  set timeoutlen=100
+  set timeoutlen=300
   set undofile
   set wrap
   set rtp+=/usr/local/opt/fzf
+  set wildignorecase                                " case insensitive filename completion
 
-  syntax enable
+  set grepprg=rg\ --vimgrep\ --no-heading
+  set nofoldenable
+  " syntax enable
+  syntax on
 " }}}
 " Mappings {{{
   let mapleader=','
@@ -109,21 +118,25 @@
   nnoremap <leader>O :call helpers#DeleteHiddenBuffers()<CR>
   nnoremap <leader>N :NV<CR>
 
+  nnoremap Q @@ " replay last macro
+
   nnoremap <leader>e :e ~/.config/nvim/init.vim<CR>
   nnoremap <leader>q :bd<CR>
   nnoremap <leader>R :e!<CR>
+  nnoremap <leader>a :Rg<space>
 
   nnoremap <leader>l :Lexplore<cr>
 
-" nnoremap <leader><CR> :NERDTreeToggle<CR>
+  " nnoremap <leader><CR> :NERDTreeToggle<CR>
   nnoremap <leader>gs :Gstatus<CR>
   xmap ga <Plug>(EasyAlign)
   nmap ga <Plug>(EasyAlign)
   vmap <CR> <Plug>(LiveEasyAlign)
-" list matches
+  " list matches
+  " Can be achieved with [I
   nnoremap <leader>lm :vim // %<CR>:copen<CR>
 
-" visually swap two words
+  " visually swap two words
   vnoremap <C-X> <Esc>`.` `gvP``P
 " }}}
 " Terminal (neovim) {{{
@@ -147,6 +160,8 @@
   let g:fzf_buffers_jump = 1
   imap <c-x><c-f> <plug>(fzf-complete-path)
   imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+
+  nnoremap <leader>h :History
 
   command! -bang -nargs=* Rg
     \ call fzf#vim#grep(
@@ -177,8 +192,10 @@
 " }}}
 " Linters + Formatters {{{
   autocmd FileType html setlocal formatprg=js-beautify\ --type=html\ -A=aligned-multiline
+  autocmd FileType svg setlocal formatprg=js-beautify\ --type=html\ -A=force-aligned-multiline\ -s=4
   autocmd FileType xml setlocal formatprg=js-beautify\ --xml\ -A\ force-aligned\ -w\ 100\ --indent-size\ 2
   autocmd FileType less setlocal formatprg=js-beautify\ --css\ -A\ force-aligned\ -w\ 100\ --indent-size\ 2
+  autocmd filetype typescript.jsx,javascript.jsx,typescript,javascript set formatprg=prettier\ --stdin\ --stdin-filepath\ %\ --parser=typescript\ --semi=false\ --single-quote\ --trailing-comma=all
 
 " don't lint HTML
   let g:ale_linters = {
@@ -190,7 +207,8 @@
   let g:ale_fixers = {
         \ 'javascript': ['prettier'],
         \ 'javascript.jsx': ['prettier'],
-        \ 'typescript': ['tslint'],
+        \ 'typescript.jsx': ['prettier'],
+        \ 'typescript': ['prettier'],
         \ 'json': ['prettier'],
         \ 'less': ['prettier'],
         \ 'html': ['prettier'],
@@ -259,28 +277,14 @@
   " inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
   let g:used_javascript_libs = 'angularjs'
 
-" prevent opening 1 when I mean :e!
+  " prevent opening 1 when I mean :e!
   autocmd BufNew 1 throw 'You ment to :e! but did :e1'
 
-" \ 'colorscheme': 'seoul256',
-" \ 'colorscheme': 'inkstained',
-  let g:lightline = {
-        \ 'active': {
-        \   'left': [[ 'mode', 'paste' ],
-        \            [ 'gitbranch', 'readonly', 'filename', 'modified' ]]
-        \ },
-        \ 'component_function': {
-        \   'gitbranch': 'fugitive#head'
-        \ },
-        \ }
-
-  " 233 darkerst, 239 lightest
   let g:gruvbox_bold=0
   let g:gruvbox_italic=1
+  let g:gruvbox_contrast_light='soft'
   colorscheme gruvbox
 
-  set grepprg=rg\ --vimgrep\ --no-heading
-  nnoremap <leader>a :Rg<space>
 " }}}
 " CoC {{{
   inoremap <silent><expr> <c-space> coc#refresh()
@@ -329,9 +333,9 @@
 
   command! -nargs=0 Format :call CocAction('format')
   let g:lightline = {
-      \ 'colorscheme': 'wombat',
+      \ 'colorscheme': 'gruvbox',
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste','gitbranch'],
+      \   'left': [ [ 'mode',      'paste',    'gitbranch'],
       \             [ 'cocstatus', 'readonly', 'modified' ] ]
       \ },
       \ 'component_function': {
@@ -340,6 +344,50 @@
       \ },
       \ }
 "}}}
+" Goyo {{{
+function! s:goyo_enter()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status off
+    silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
+  endif
+  set noshowmode
+  set noshowcmd
+  set scrolloff=999
+  set nowrap
+  Limelight
+  " ...
+endfunction
 
-let base16colorspace=256
-set nofoldenable
+function! s:goyo_leave()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status on
+    silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
+  endif
+  set showmode
+  set showcmd
+  set scrolloff=5
+  Limelight!
+  " ...
+endfunction
+
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
+" }}}
+" LightLine {{{
+function! s:setLightlineColorscheme(name)
+  let g:lightline.colorscheme = a:name
+  call lightline#init()
+  call lightline#colorscheme()
+  call lightline#update()
+endfun
+
+function! s:lightlineColorschemes(...)
+  return join(map(
+        \ globpath(&rtp,"autoload/lightline/colorscheme/*.vim",1,1),
+        \ "fnamemodify(v:val,':t:r')"),
+        \ "\n")
+endfun
+
+com! -nargs=1 -complete=custom,s:lightlineColorschemes LightlineColorscheme
+      \ call s:setLightlineColorscheme(<q-args>)
+" }}}

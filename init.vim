@@ -1,6 +1,6 @@
 " vim:foldmethod=marker:foldlevel=0:foldenable
 " Plugins {{{
-  let enabled_filetypes = { 'for': ['javascript', 'javascript.jsx', 'typescript', 'typescript.jsx', 'html'] }
+  " let enabled_filetypes = { 'for': ['javascript', 'javascript.jsx', 'typescript', 'typescript.jsx', 'html'] }
 
   call plug#begin('~/nvim/plugged')
 
@@ -8,20 +8,23 @@
     Plug 'morhetz/gruvbox'
     Plug 'yuttie/inkstained-vim'
     Plug 'mhartington/oceanic-next'
+    Plug 'flrnprz/taffy.vim'
     Plug 'edkolev/tmuxline.vim'
+    Plug 'ayu-theme/ayu-vim'
     " Plug 'chriskempson/base16-vim'
 
-    Plug 'ap/vim-css-color'
-    Plug 'shinchu/lightline-gruvbox.vim'
+    " Plug 'ap/vim-css-color'
+    " Plug 'shinchu/lightline-gruvbox.vim'
     Plug 'itchyny/lightline.vim'
     Plug 'junegunn/goyo.vim',  { 'on': 'Goyo' }
     Plug 'junegunn/limelight.vim', { 'on': 'Limelight' }
 " }}}}
 " Languages {{{
-    Plug 'w0rp/ale', enabled_filetypes
+    " Plug 'w0rp/ale', enabled_filetypes
     Plug 'sheerun/vim-polyglot'
     Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
-    Plug 'amadeus/vim-xml'
+    Plug 'mfukar/robotframework-vim' 
+    " Plug 'amadeus/vim-xml'
 " }}}
 " Utils {{{
     Plug '/usr/local/bin/fzf'
@@ -198,46 +201,46 @@
   autocmd filetype typescript.jsx,javascript.jsx,typescript,javascript set formatprg=prettier\ --stdin\ --stdin-filepath\ %\ --parser=typescript\ --semi=false\ --single-quote\ --trailing-comma=all
 
 " don't lint HTML
-  let g:ale_linters = {
-        \ 'html': [],
-        \ 'javascript': ['eslint'],
-        \ 'haskell': [ 'hlint', 'hdevtools', 'hfmt'],
-        \ }
-
-  let g:ale_fixers = {
-        \ 'javascript': ['prettier'],
-        \ 'javascript.jsx': ['prettier'],
-        \ 'typescript.jsx': ['prettier'],
-        \ 'typescript': ['prettier'],
-        \ 'json': ['prettier'],
-        \ 'less': ['prettier'],
-        \ 'html': ['prettier'],
-        \ '*': ['remove_trailing_lines', 'trim_whitespace'],
-        \ }
-
-  let g:ale_pattern_options = {
-        \ 'node_modules/': { 'ale_enabled': 0 }
-        \ }
+  " let g:ale_linters = {
+  "       \ 'html': [],
+  "       \ 'javascript': ['eslint'],
+  "       \ 'haskell': [ 'hlint', 'hdevtools', 'hfmt'],
+  "       \ }
+  "
+  " let g:ale_fixers = {
+  "       \ 'javascript': ['prettier'],
+  "       \ 'javascript.jsx': ['prettier'],
+  "       \ 'typescript.jsx': ['prettier'],
+  "       \ 'typescript': ['prettier'],
+  "       \ 'json': ['prettier'],
+  "       \ 'less': ['prettier'],
+  "       \ 'html': ['prettier'],
+  "       \ '*': ['remove_trailing_lines', 'trim_whitespace'],
+  "       \ }
+  "
+  " let g:ale_pattern_options = {
+  "       \ 'node_modules/': { 'ale_enabled': 0 }
+  "       \ }
 
 " use local config
-  let g:ale_javascript_prettier_use_local_config = 1
+  " let g:ale_javascript_prettier_use_local_config = 1
 
 " open the quickfix list instead of just displaying one line
 " let g:ale_open_list = 1
 
-  let g:ale_list_window_size = 10
-  let g:ale_keep_list_window_open = 1
+  " let g:ale_list_window_size = 10
+  " let g:ale_keep_list_window_open = 1
 
-  nnoremap ep :ALEPrevious<CR>
-  nnoremap en :ALENext<CR>
-  nnoremap ed :ALEDetail<CR>
-  nnoremap eh :ALEHover<CR>
+  " nnoremap ep :ALEPrevious<CR>
+  " nnoremap en :ALENext<CR>
+  " nnoremap ed :ALEDetail<CR>
+  " nnoremap eh :ALEHover<CR>
 
 " primitive html auto-format
   vnoremap <leader>x JV:s/>\s*</>\r</<CR>
 
 " nnoremap <leader>f :!npx tslint --fix<CR>
-  nnoremap <leader>f :ALEFix<CR>
+  " nnoremap <leader>f :ALEFix<CR>
 " nnoremap <leader>p :%!prettier --single-quote --trailing-comma es5  %<CR>
   nnoremap <leader>p :silent exec '%!prettier --single-quote --trailing-comma=all --parser='. &filetype<CR>
 " }}}
@@ -280,10 +283,12 @@
   " prevent opening 1 when I mean :e!
   autocmd BufNew 1 throw 'You ment to :e! but did :e1'
 
-  let g:gruvbox_bold=0
-  let g:gruvbox_italic=1
-  let g:gruvbox_contrast_light='soft'
-  colorscheme gruvbox
+  " let g:gruvbox_bold=0
+  " let g:gruvbox_italic=1
+  " let g:gruvbox_contrast_light='soft'
+  " colorscheme gruvbox
+  let ayucolor='mirage' " mirage | light | dark
+  colorscheme ayu
 
 " }}}
 " CoC {{{
@@ -302,8 +307,8 @@
   inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
   " Use `[c` and `]c` for navigate diagnostics
-  nmap <silent> [c <Plug>(coc-diagnostic-prev)
-  nmap <silent> ]c <Plug>(coc-diagnostic-next)
+  nmap <silent> ep <Plug>(coc-diagnostic-prev)
+  nmap <silent> en <Plug>(coc-diagnostic-next)
 
   " Remap keys for gotos
   nmap <silent> gd <Plug>(coc-definition)
@@ -333,7 +338,7 @@
 
   command! -nargs=0 Format :call CocAction('format')
   let g:lightline = {
-      \ 'colorscheme': 'gruvbox',
+      \ 'colorscheme': 'taffy',
       \ 'active': {
       \   'left': [ [ 'mode',      'paste',    'gitbranch'],
       \             [ 'cocstatus', 'readonly', 'modified' ] ]
